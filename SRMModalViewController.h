@@ -1,3 +1,4 @@
+
 //
 //  SRMModalViewController.h
 //  Example
@@ -28,6 +29,8 @@ extern NSString *const SRMModalViewDidHideNotification;
 @interface SRMModalViewController : NSObject
 
 @property (nonatomic, weak) id<SRMModalViewControllerDelegate> delegate;
+// EDIT BEN
+@property (nonatomic) CGPoint displayFrom;
 // The color of the background mask view, default value is black.
 @property (nonatomic) UIColor *backgroundColor;
 // The opacity of the background mask view, default value is 0.4.
@@ -44,6 +47,7 @@ extern NSString *const SRMModalViewDidHideNotification;
 + (instancetype)sharedInstance;
 // If you do not indicate size of view, it will use current size of view to show. And the layout of content view will be in center.
 - (void)showView:(UIView *)view;
+- (void)showViewWithController:(UIViewController *)viewController center:(CGPoint)center;
 - (void)showView:(UIView *)view size:(CGSize)size;
 - (void)showViewWithController:(UIViewController *)viewController;
 - (void)showViewWithController:(UIViewController *)viewController size:(CGSize)size;
