@@ -36,6 +36,7 @@ NSString *const SRMModalViewDidHideNotification = @"SRMModalViewDidHideNotificat
         self.shouldRotate = YES;
         self.showingAnimationStyle = SRMShowingAnimationStyleDefault;
         self.hidingAnimationStyle = SRMHidingAnimationStyleDefault;
+        self.displayFrom = CGPointZero;
     }
     
     return self;
@@ -51,6 +52,11 @@ NSString *const SRMModalViewDidHideNotification = @"SRMModalViewDidHideNotificat
     });
     
     return sharedInstance;
+}
+
+- (void)showViewWithController:(UIViewController *)viewController center:(CGPoint)center {
+    self.displayFrom = center;
+    [self showViewWithController:viewController size:viewController.view.frame.size];
 }
 
 - (void)showViewWithController:(UIViewController *)viewController {
@@ -87,7 +93,10 @@ NSString *const SRMModalViewDidHideNotification = @"SRMModalViewDidHideNotificat
     self.containerViewController.shouldRotate = self.shouldRotate;
     self.containerViewController.statusBarStyle = self.statusBarStyle;
     [self.containerViewController.view addSubview:view];
-    [view addConstraintsForCenterInSuperView];
+    view.center = self.containerViewController.view.center;
+    
+//    [view addConstraintsForCenterInSuperView];
+    
     self.contentView = view;
     [self addReferenceToSelf];
     self.window.rootViewController = self.containerViewController;
@@ -179,16 +188,19 @@ NSString *const SRMModalViewDidHideNotification = @"SRMModalViewDidHideNotificat
         [self setContainerBackgroundOpacity:self.backgroundOpacity];
     }];
     self.contentView.alpha = 0;
+//    self.contentView.frame = CGRectMake(0, 0, self.contentView.frame.size.width, self.contentView.frame.size.height);
+    self.contentView.center = self.displayFrom;
     self.contentView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.4, 0.4);
     [UIView animateWithDuration:0.2 animations:^{
         self.contentView.alpha = 1;
-        self.contentView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
+        self.contentView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+        self.contentView.center = self.containerViewController.view.center;
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            self.contentView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
-        } completion:^(BOOL finalFinished) {
-            [self postDidShowNotification];
-        }];
+//        [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+//            self.contentView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+//        } completion:^(BOOL finalFinished) {
+//            [self postDidShowNotification];
+//        }];
     }];
 }
 
@@ -200,6 +212,7 @@ NSString *const SRMModalViewDidHideNotification = @"SRMModalViewDidHideNotificat
         self.contentView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
     } completion:^(BOOL finished) {
         [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+            self.contentView.center = self.displayFrom;
             self.contentView.alpha = 0;
             self.contentView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.4, 0.4);
         } completion:^(BOOL finalFinished){
